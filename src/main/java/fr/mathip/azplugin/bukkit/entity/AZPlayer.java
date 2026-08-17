@@ -8,10 +8,7 @@ import fr.mathip.azplugin.bukkit.utils.SchedulerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
-import pactify.client.api.plprotocol.metadata.ImmutablePactifyModelMetadata;
-import pactify.client.api.plprotocol.metadata.PactifyModelMetadata;
 import pactify.client.api.plsp.packet.client.PLSPPacketAbstractMeta;
-import pactify.client.api.plsp.packet.client.PLSPPacketEntityMeta;
 import pactify.client.api.plsp.packet.client.PLSPPacketPlayerMeta;
 import pactify.client.api.plsp.packet.client.PLSPPacketReset;
 
@@ -28,8 +25,6 @@ public class AZPlayer extends AZEntity {
     private final Set<Integer> scheduledTasks;
     private boolean joined;
     private int launcherProtocolVersion;
-
-    private PLSPPacketEntityMeta playerMeta;
 
     static {
         AZ_HOSTNAME_PATTERN = Pattern.compile("[\u0000\u0002]PAC([0-9A-F]{5})[\u0000\u0002]");
@@ -51,15 +46,21 @@ public class AZPlayer extends AZEntity {
         Bukkit.getScheduler().runTaskLaterAsynchronously(
                 Main.getInstance(),
                 () -> {
-                    AZManager.sendPLSPMessage(player, new PLSPPacketReset());
+                    try {
+                        if (player == null) return;
+                        AZManager.sendPLSPMessage(player, new PLSPPacketReset());
 
-                    ConfigManager.getInstance().getConFlags().applyFlags(player);
-                    ConfigManager.getInstance().applyUIComponents(player);
+                        ConfigManager.getInstance().getConFlags().applyFlags(player);
+                        ConfigManager.getInstance().applyUIComponents(player);
 
-                    List<AZEntity> entities = new ArrayList<>(Main.getAZManager().getEntyties());
-                    entities.addAll(Main.getAZManager().getAZPlayers());
-                    for (AZEntity azEntity : entities) {
-                        azEntity.flush(player);
+                        List<AZEntity> entities = new ArrayList<>(Main.getAZManager().getEntyties());
+                        entities.addAll(Main.getAZManager().getAZPlayers());
+                        for (AZEntity azEntity : entities) {
+                            azEntity.flush(player);
+                        }
+                    } catch (Exception e) {
+                        Main.getInstance().getLogger().severe("Error in AZPlayer.init() async task for " + player.getName() + ": " + e.getMessage());
+                        e.printStackTrace();
                     }
                 },
                 10L);
@@ -85,7 +86,6 @@ public class AZPlayer extends AZEntity {
         super(player);
         this.scheduledTasks = new HashSet<Integer>();
         this.player = player;
-        this.playerMeta = new PLSPPacketEntityMeta(player.getEntityId());
     }
 
     public Player getPlayer() {
@@ -103,11 +103,11 @@ public class AZPlayer extends AZEntity {
     @Override
     protected PLSPPacketAbstractMeta createMetadataPacket() {
         PLSPPacketPlayerMeta playerMeta = new PLSPPacketPlayerMeta(player.getUniqueId());
-        playerMeta.setScale(getScale().toPacMetadata());
-        playerMeta.setTag(getTag().toPacMetadata());
-        playerMeta.setSupTag(getSupTag().toPacMetadata());
-        playerMeta.setSubTag(getSubTag().toPacMetadata());
-        playerMeta.setModel(getModel().toPacMetadata());
+        playerMeta.setScale(safeScale());
+        playerMeta.setTag(safeTag());
+        playerMeta.setSupTag(safeSupTag());
+        playerMeta.setSubTag(safeSubTag());
+        playerMeta.setModel(safeModel());
         playerMeta.setOpacity(getOpacity());
         return playerMeta;
     }
@@ -173,6 +173,7 @@ public class AZPlayer extends AZEntity {
     }
 
     public static boolean hasAZLauncher(final Player player) {
-        return Main.getAZManager().getPlayer(player).hasLauncher();
+        AZPlayer azPlayer = Main.getAZManager().getPlayer(player);
+        return azPlayer != null && azPlayer.hasLauncher();
     }
 }

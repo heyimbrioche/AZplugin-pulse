@@ -29,6 +29,7 @@ public class AZSeechunks implements AZCommand{
             if (Bukkit.getPlayer(args[1]) != null) {
                 Player target = Bukkit.getPlayer(args[1]);
                 if (args.length >= 3) {
+                    // On/off explicite
                     if (args[2].equalsIgnoreCase("on")) {
                         PacketConf.setFlag(target, PLSPConfFlag.SEE_CHUNKS, true);
                     } else if (args[2].equalsIgnoreCase("off")) {
@@ -38,6 +39,8 @@ public class AZSeechunks implements AZCommand{
                     }
                     return;
                 }
+                // Pas d'argument on/off : on toggle. La liste playersSeeChunks
+                // sert juste à savoir qui l'a activé pour pouvoir retoggler
                 if (Main.getInstance().playersSeeChunks.contains(target)) {
                     PacketConf.setFlag(target, PLSPConfFlag.SEE_CHUNKS, false);
                     Main.getInstance().playersSeeChunks.remove(target);

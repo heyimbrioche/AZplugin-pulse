@@ -26,6 +26,7 @@ public class AZVignette implements AZCommand{
     public void execute(CommandSender sender, String[] args) {
         Player target;
 
+        // Le joueur est le 5e argument ici (vignette <R> <G> <B> [joueur])
         if (args.length >= 5) {
             target = Bukkit.getPlayer(args[4]);
             if (target == null) {
@@ -42,6 +43,7 @@ public class AZVignette implements AZCommand{
 
         if (args.length >= 4) {
             try {
+                // Petite vignette colorée sur les bords de l'écran, en RGB
                 int red = Integer.parseInt(args[2]);
                 int green = Integer.parseInt(args[3]);
                 int blue = Integer.parseInt(args[4]);
@@ -53,6 +55,7 @@ public class AZVignette implements AZCommand{
             }
 
         } else if (args.length >= 3 && args[2].equalsIgnoreCase("reset")) {
+            // "reset" désactive juste la vignette
             PLSPPacketVignette packetVignette = new PLSPPacketVignette();
             packetVignette.setEnabled(false);
             AZManager.sendPLSPMessage(target, packetVignette);

@@ -48,12 +48,14 @@ public class PacketWindow implements Listener {
                 UUID uuid = event.getPlayer().getUniqueId();
                 PacketContainer packet = event.getPacket();
                 if (AZPlayer.hasAZLauncher(player)) {
-                    windowId.put(uuid, windowId.get(uuid)+1);
-                    if (windowId.get(uuid) >= 201) {
-                        windowId.put(uuid, windowId.get(uuid)-100);
+                    int currentId = windowId.getOrDefault(uuid, 100);
+                    currentId++;
+                    if (currentId >= 201) {
+                        currentId -= 100;
                     }
+                    windowId.put(uuid, currentId);
                     if (customWindow.contains(uuid)) {
-                        packet.getIntegers().write(0, windowId.get(uuid));
+                        packet.getIntegers().write(0, currentId);
                         event.setPacket(packet);
                     }
                 }
@@ -92,6 +94,25 @@ public class PacketWindow implements Listener {
         });
 
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(plugin, ListenerPriority.NORMAL, PacketType.Play.Server.WINDOW_ITEMS) {
+            @Override
+            public void onPacketSending(PacketEvent event) {
+                Player player = event.getPlayer();
+                UUID uuid = event.getPlayer().getUniqueId();
+                PacketContainer packet = event.getPacket();
+                if (AZPlayer.hasAZLauncher(player)) {
+                    if (customWindow.contains(uuid)) {
+                        packet.getIntegers().write(0, windowId.get(uuid));
+                        event.setPacket(packet);
+                    }
+                }
+            }
+        });
+
+        // SET_SLOT doit être réécrit comme WINDOW_ITEMS : sans cela, les plugins
+        // qui mettent à jour un inventaire spécial en place (setItem sur
+        // l'inventaire ouvert) envoient des packets avec le mauvais window id,
+        // ignorés par le launcher (ex : interface de trade qui ne s'actualise pas).
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(plugin, ListenerPriority.NORMAL, PacketType.Play.Server.SET_SLOT) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 Player player = event.getPlayer();
@@ -145,10 +166,25 @@ public class PacketWindow implements Listener {
     void OnInventoryOpen(InventoryOpenEvent e) {
         if (e.getPlayer() instanceof Player) {
             Player p = (Player) e.getPlayer();
-            for (String character : ConfigManager.getInstance().getSpecialInventoryCharacters()) {
-                if (e.getInventory().getTitle().contains(character)) {
-                    PacketWindow.customWindow.add(p.getUniqueId());
+            List<String> specialCharacters = ConfigManager.getInstance().getSpecialInventoryCharacters();
+            boolean special = false;
+            if (specialCharacters != null) {
+                for (String character : specialCharacters) {
+                    if (e.getInventory().getTitle().contains(character)) {
+                        special = true;
+                        break;
+                    }
                 }
+            }
+            if (special) {
+                PacketWindow.customWindow.add(p.getUniqueId());
+            } else {
+                // Inventaire non spécial : on sort le joueur de customWindow. Sans
+                // cela, une fenêtre spéciale fermée CÔTÉ SERVEUR (closeInventory
+                // d'un plugin, fin de trade...) laissait le joueur "custom" : la
+                // fenêtre suivante (ex: /vhead) devenait transparente à tort sur
+                // le launcher jusqu'à la prochaine fermeture côté client.
+                PacketWindow.customWindow.remove(p.getUniqueId());
             }
         }
     }

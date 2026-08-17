@@ -60,15 +60,20 @@ public class ConfigManager {
 
         UIComponents = new ArrayList<>();
         ConfigurationSection uiSection = config.getConfigurationSection("ui-buttons");
-        for (String pathName : uiSection.getKeys(false)) {
-            if (uiSection.getBoolean(pathName + ".enable")) {
-                ConfigurationSection uiComponentSection = uiSection.getConfigurationSection(pathName);
-                PacketUiComponent uiComponent = new PacketUiComponent(uiComponentSection.getString("text"), pathName,
-                        uiComponentSection.getString("hover-text"), uiComponentSection.getString("command"));
-                UIComponents.add(uiComponent);
+        if (uiSection != null) {
+            for (String pathName : uiSection.getKeys(false)) {
+                if (uiSection.getBoolean(pathName + ".enable")) {
+                    ConfigurationSection uiComponentSection = uiSection.getConfigurationSection(pathName);
+                    PacketUiComponent uiComponent = new PacketUiComponent(uiComponentSection.getString("text"), pathName,
+                            uiComponentSection.getString("hover-text"), uiComponentSection.getString("command"));
+                    UIComponents.add(uiComponent);
+                }
             }
         }
-        Main.getInstance().getModuleManager().loadConfig(config.getConfigurationSection("module"));
+        ConfigurationSection moduleSection = config.getConfigurationSection("module");
+        if (moduleSection != null) {
+            Main.getInstance().getModuleManager().loadConfig(moduleSection);
+        }
         Main.getInstance().getLogger().info("Config loaded !");
     }
 

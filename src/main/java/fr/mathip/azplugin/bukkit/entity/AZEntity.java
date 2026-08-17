@@ -5,6 +5,9 @@ import fr.mathip.azplugin.bukkit.entity.appearance.AZEntityModel;
 import fr.mathip.azplugin.bukkit.entity.appearance.AZEntityScale;
 import fr.mathip.azplugin.bukkit.entity.appearance.AZEntityTag;
 import lombok.Data;
+import pactify.client.api.plprotocol.metadata.PactifyModelMetadata;
+import pactify.client.api.plprotocol.metadata.PactifyScaleMetadata;
+import pactify.client.api.plprotocol.metadata.PactifyTagMetadata;
 import pactify.client.api.plsp.packet.client.PLSPPacketAbstractMeta;
 import pactify.client.api.plsp.packet.client.PLSPPacketEntityMeta;
 
@@ -37,13 +40,33 @@ public class AZEntity {
         this.opacity = -1.0F;
     }
 
+    protected PactifyScaleMetadata safeScale() {
+        return scale != null ? scale.toPacMetadata() : PLSPPacketAbstractMeta.DEFAULT_SCALE;
+    }
+
+    protected PactifyModelMetadata safeModel() {
+        return model != null ? model.toPacMetadata() : PLSPPacketAbstractMeta.DEFAULT_MODEL;
+    }
+
+    protected PactifyTagMetadata safeTag() {
+        return tag != null ? tag.toPacMetadata() : PLSPPacketAbstractMeta.DEFAULT_TAG;
+    }
+
+    protected PactifyTagMetadata safeSubTag() {
+        return subTag != null ? subTag.toPacMetadata() : PLSPPacketAbstractMeta.DEFAULT_TAG;
+    }
+
+    protected PactifyTagMetadata safeSupTag() {
+        return supTag != null ? supTag.toPacMetadata() : PLSPPacketAbstractMeta.DEFAULT_TAG;
+    }
+
     protected PLSPPacketAbstractMeta createMetadataPacket() {
         PLSPPacketEntityMeta entityMeta = new PLSPPacketEntityMeta(entity.getEntityId());
-        entityMeta.setScale(scale.toPacMetadata());
-        entityMeta.setModel(model.toPacMetadata());
-        entityMeta.setTag(tag.toPacMetadata());
-        entityMeta.setSupTag(supTag.toPacMetadata());
-        entityMeta.setSubTag(subTag.toPacMetadata());
+        entityMeta.setScale(safeScale());
+        entityMeta.setModel(safeModel());
+        entityMeta.setTag(safeTag());
+        entityMeta.setSupTag(safeSupTag());
+        entityMeta.setSubTag(safeSubTag());
         entityMeta.setOpacity(opacity);
         return entityMeta;
     }

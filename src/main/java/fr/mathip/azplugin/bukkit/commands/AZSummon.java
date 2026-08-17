@@ -33,6 +33,7 @@ public class AZSummon implements AZCommand {
         float size;
         Location location;
         Player player = (Player) sender;
+        // Sans coordonnées : on invoque là où se trouve le sender
         if (args.length == 3) {
             if (player == null) {
                 sender.sendMessage("Usage: /az summon <entity> <taille> <x> <y> <z>");
@@ -41,6 +42,7 @@ public class AZSummon implements AZCommand {
                 location = player.getLocation();
             }
         } else if (args.length >= 6) {
+            // Avec coordonnées explicites
             try {
                 float x = Float.parseFloat(args[3]);
                 float y = Float.parseFloat(args[4]);
@@ -49,6 +51,7 @@ public class AZSummon implements AZCommand {
                 if (player != null) {
                     world = player.getWorld();
                 } else {
+                    // Pas de joueur en face, on prend le monde principal
                     world = Bukkit.getWorld("world");
                 }
                 location = new Location(world, x, y, z);
@@ -68,8 +71,21 @@ public class AZSummon implements AZCommand {
             sender.sendMessage("§cErreur: La taille est invalide");
             return;
         }
+        PLSPPlayerModel model;
+        try {
+            // Le modèle PLSP contient l'ID de l'entité vanilla à spawn
+            model = PLSPPlayerModel.valueOf(args[1].toUpperCase());
+        } catch (IllegalArgumentException e) {
+            sender.sendMessage("§cErreur: Le modèle '" + args[1] + "' est invalide !");
+            return;
+        }
+        // On spawn une vraie entité, puis on lui applique la taille custom
         Entity entity = location.getWorld().spawnEntity(location,
-                EntityType.fromId(PLSPPlayerModel.valueOf(args[1]).getId()));
+                EntityType.fromId(model.getId()));
+        if (entity == null) {
+            sender.sendMessage("§cErreur: Impossible de créer l'entité !");
+            return;
+        }
         AZEntity azEntity = Main.getAZManager().getEntity(entity);
         azEntity.setScale(new AZEntityScale(size));
         azEntity.flush();

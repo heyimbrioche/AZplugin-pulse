@@ -18,10 +18,12 @@ public class ModuleManager {
         register();
     }
 
+    // Active/désactive les modules selon la section de la config
     public void loadConfig(ConfigurationSection config) {
         playerTagModule.setEnable(config.getBoolean(playerTagModule.getConfigSection()));
     }
 
+    // Nouveaux modules = une ligne ici + une ligne dans loadConfig
     private void register() {
         playerTagModule = new PlayerTagModule();
     }

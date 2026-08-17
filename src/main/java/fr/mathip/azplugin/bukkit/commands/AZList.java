@@ -27,6 +27,7 @@ public class AZList implements AZCommand{
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        // On sépare les joueurs en deux camps : ceux avec le launcher, les autres
         List<String> pactifyList = new ArrayList<>();
         List<String> vanillaList = new ArrayList<>();
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -36,6 +37,7 @@ public class AZList implements AZCommand{
             }
             vanillaList.add(player.getName());
         }
+        // Tri alphabétique histoire d'avoir une liste propre
         pactifyList.sort(String::compareToIgnoreCase);
         vanillaList.sort(String::compareToIgnoreCase);
         sender.sendMessage(ChatColor.YELLOW + "Les joueurs qui utilisent le AZ launcher: " + (

@@ -37,6 +37,7 @@ public class AZSize implements AZCommand {
             sender.sendMessage("§cErreur : La taille n'est pas un nombre valide.");
             return;
         }
+        // Pas de joueur précisé ? On cible le sender (il doit être joueur du coup)
         if (args.length >= 3) {
             target = Bukkit.getPlayer(args[2]);
             if (target == null) {
@@ -53,6 +54,7 @@ public class AZSize implements AZCommand {
         AZPlayer azPlayer = Main.getAZManager().getPlayer(target);
 
         azPlayer.setScale(new AZEntityScale(size));
+        // Un tick de décalage pour pas envoyer le packet en pleine mise à jour de l'entité
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> azPlayer.flush(), 1);
         sender.sendMessage("§a[AZPlugin]§e changement de taille effectué !");
     }

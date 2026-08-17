@@ -17,6 +17,7 @@ public class AZUpdate {
     public AZUpdate(Main main, Integer pluginId) {
         this.thisVersion = main.getPluginVersion();
         try {
+            // L'API de SpigotMC renvoie directement la dernière version dispo pour l'ID de ressource
             this.checkURL = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + pluginId);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
@@ -26,6 +27,7 @@ public class AZUpdate {
     public boolean checkForUpdate() {
         try {
             URLConnection con = this.checkURL.openConnection();
+            // L'API renvoie juste "1.0.0" sur une seule ligne, d'où le readLine
             this.newVersion = "v" + (new BufferedReader(new InputStreamReader(con.getInputStream()))).readLine();
             if (compareVersion(this.thisVersion, this.newVersion) < 0)
                 return true;
@@ -35,6 +37,8 @@ public class AZUpdate {
         }
     }
 
+    // Compare deux versions "x.y.z" segment par segment.
+    // Gère aussi les versions plus longues (ex: 1.2.3.4), d'où la boucle sur la longueur max.
     private int compareVersion(String version1, String version2) {
         String[] arr1 = version1.replace("v", "").split("\\.");
         String[] arr2 = version2.replace("v", "").split("\\.");

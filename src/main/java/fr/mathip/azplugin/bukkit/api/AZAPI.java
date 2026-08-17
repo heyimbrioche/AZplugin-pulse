@@ -9,53 +9,58 @@ import fr.mathip.azplugin.bukkit.Main;
 import fr.mathip.azplugin.bukkit.entity.AZEntity;
 import fr.mathip.azplugin.bukkit.entity.AZPlayer;
 
+/**
+ * API publique pour les plugins tiers.
+ * Tout passe par Main.getAZManager(), on ne fait que du "relay" ici
+ * pour que les autres plugins aient pas à toucher aux classes internes.
+ */
 public class AZAPI {
 
     /**
-     * Retrieves an AZPlayer wrapper for the given Player.
+     * Récupère l'AZPlayer (wrapper) d'un joueur.
      *
-     * @param player the Bukkit Player to look up
-     * @return the AZPlayer wrapper, or null if not found
+     * @param player le joueur Bukkit
+     * @return l'AZPlayer, ou null si pas trouvé (rare)
      */
     public static AZPlayer getPlayer(Player player) {
         return Main.getAZManager().getPlayer(player);
     }
 
     /**
-     * Returns a list of all AZPlayers.
+     * Tous les AZPlayers actuellement connectés.
      *
-     * @return list of all AZPlayers
+     * @return la liste des AZPlayers
      */
     public static List<AZPlayer> getPlayers() {
         return Main.getAZManager().getAZPlayers();
     }
 
     /**
-     * Retrieves an AZEntity wrapper for the given Entity.
-     * Returns null if the entity is not tracked.
+     * Récupère l'AZEntity d'une entité.
+     * Retourne null si l'entité n'est pas suivie (pas encore spawn par ex).
      *
-     * @param entity the Bukkit Entity to look up
-     * @return the AZEntity wrapper, or null if not tracked
+     * @param entity l'entité Bukkit
+     * @return l'AZEntity, ou null si pas suivie
      */
     public static AZEntity getEntityOrNull(Entity entity) {
         return Main.getAZManager().getEntityOrNull(entity);
     }
 
     /**
-     * Retrieves an AZEntity wrapper for the given Entity.
-     * Creates a new AZEntity if not already tracked.
+     * Comme getEntityOrNull, sauf que si l'entité n'existe pas encore
+     * elle est créée et enregistrée au passage.
      *
-     * @param entity the Bukkit Entity to look up
-     * @return the AZEntity wrapper
+     * @param entity l'entité Bukkit
+     * @return l'AZEntity
      */
     public static AZEntity getEntity(Entity entity) {
         return Main.getAZManager().getEntity(entity);
     }
 
     /**
-     * Returns a list of all tracked AZEntities.
+     * La liste de toutes les entités suivies.
      *
-     * @return list of all AZEntities
+     * @return liste des AZEntities
      */
     public static List<AZEntity> getEntities() {
         return Main.getAZManager().getEntyties();

@@ -33,6 +33,7 @@ public class ItemSpriteCommand implements ItemCommand {
         }
         Sprite sprite;
         try {
+            // Le sprite doit matcher une valeur de l'énum Sprite (items customs du launcher)
             sprite = Sprite.valueOf(args[2].toUpperCase());
         } catch (IllegalArgumentException e) {
             player.sendMessage("§cSprite invalide !");
@@ -40,10 +41,11 @@ public class ItemSpriteCommand implements ItemCommand {
         }
         nbtItem.mergeCompound(new NBTContainer("{PacDisplay: {Sprite: \"" + sprite.name() + "\"}}"));
         player.setItemInHand(nbtItem.getItem());
-
+        player.sendMessage("§a[AZPlugin]§e Sprite appliqué: §f" + sprite.name());
     }
 
     @Override
+    // Suggestions pour la tab completion du nom du sprite
     public List<String> suggest(Player player, String[] args) {
         List<String> completion = new ArrayList<>();
         for (Sprite sprite : Sprite.values()) {

@@ -1,6 +1,7 @@
 package fr.mathip.azplugin.bukkit.commands;
 
 import fr.mathip.azplugin.bukkit.commands.items.ItemCommand;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -35,12 +36,14 @@ public class AZItemCommand implements AZCommand {
             return;
         }
         if (args.length == 1) {
+            // Sans argument, on liste les sous-commandes dispo
             sender.sendMessage("§a[AZPlugin]§e Liste des commandes d'items:");
             for (ItemCommand itemCommand : CommandManager.getInstance().getItemCommands().values()) {
                 sender.sendMessage("§a /az item " + itemCommand.name() + " :§e " + itemCommand.description());
             }
             return;
         }
+        // On cherche la sous-commande correspondante, puis on lui passe l'item en main (en NBT)
         for (Map.Entry<Class<? extends ItemCommand>, ItemCommand> itemCommand : CommandManager.getInstance()
                 .getItemCommands().entrySet()) {
             if (args[1].equalsIgnoreCase(itemCommand.getValue().name())) {
@@ -48,13 +51,12 @@ public class AZItemCommand implements AZCommand {
                     sender.sendMessage("§cVous n'avez pas la permission d'utiliser cette commande !");
                     return;
                 }
-                if (player.getItemInHand() == null) {
+                if (player.getItemInHand() == null || player.getItemInHand().getType() == Material.AIR) {
                     player.sendMessage("§cErreur: Vous devez porter un item !");
                     return;
                 }
                 NBTItem nbtItem = new NBTItem(player.getItemInHand());
                 itemCommand.getValue().execute(player, nbtItem, args);
-                player.sendMessage("§a[AZPlugin]§e Item modifié avec succes !");
                 return;
             }
         }

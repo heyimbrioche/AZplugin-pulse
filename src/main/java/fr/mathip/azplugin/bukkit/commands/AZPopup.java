@@ -33,6 +33,7 @@ public class AZPopup implements AZCommand{
             sender.sendMessage("§cCe joueur est hors-ligne !");
             return;
         }
+        // Les popups sont définies dans la config, on les retrouve par leur nom
         PacketPopup popup = ConfigManager.getInstance().getPopupConfig().getPopupByName(args[1]);
         if (popup != null) {
             popup.send(target);

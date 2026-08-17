@@ -45,6 +45,7 @@ public class AZModel implements AZCommand {
             }
         }
         AZPlayer azPlayer = Main.getAZManager().getPlayer(target);
+        // "reset" = on revient à l'apparence normale (nouvel AZEntityModel vide)
         if (args[1].equalsIgnoreCase("reset")) {
             azPlayer.setModel(new AZEntityModel());
             azPlayer.flush();
@@ -52,6 +53,7 @@ public class AZModel implements AZCommand {
             return;
         }
         try {
+            // Le nom du model doit matcher une valeur de l'énum PLSPPlayerModel
             PLSPPlayerModel plspPlayerModel = PLSPPlayerModel.valueOf(args[1].toUpperCase());
             azPlayer.setModel(new AZEntityModel(plspPlayerModel));
             azPlayer.flush();

@@ -41,9 +41,12 @@ public class AZItemRender implements AZCommand{
                     p.sendMessage("§cErreur: Vous devez porter un item !");
                     return;
                 }
+                // On écrit les tags NBT PacRender/PacDisplay direct dans l'item
                 NBTItem nbti = new NBTItem(p.getItemInHand());
                 nbti.mergeCompound(new NBTContainer("{PacRender: {Scale: "+Float.parseFloat(args[1])+", Color: "+ AZColor.get0xAARRGGBB(args[2])+"}, PacDisplay: {Color: "+AZColor.get0xAARRGGBB(args[2])+"}}"));
-                p.getItemInHand().setItemMeta(nbti.getItem().getItemMeta());
+                // setItemInHand : setItemMeta(getItemMeta()) strip les enchantements en 1.8
+                // Du coup on repasse par l'item NBT complet pour pas perdre les enchants
+                p.setItemInHand(nbti.getItem());
             } catch (NumberFormatException e){
                 p.sendMessage("§cErreur : Les valeur est invalide !.");
             }
@@ -54,7 +57,7 @@ public class AZItemRender implements AZCommand{
                         p.setItemInHand(azItem.getItemStack());*/
                 NBTItem nbti = new NBTItem(p.getItemInHand());
                 nbti.mergeCompound(new NBTContainer("{PacRender: {Scale: "+Float.parseFloat(args[1])+"}}"));
-                p.getItemInHand().setItemMeta(nbti.getItem().getItemMeta());
+                p.setItemInHand(nbti.getItem());
             } catch (NumberFormatException e){
                 p.sendMessage("§cErreur : Les valeur est invalide !.");
             }

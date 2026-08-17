@@ -25,10 +25,13 @@ public class AZChatComponent implements NotchianChatComponent {
     public AZChatComponent(TextComponent textComponent) {
         this.text = textComponent.getText();
         this.extra = new ArrayList<>();
-        if (textComponent.getExtra() != null && textComponent.getExtra().size() != 0) {
+        if (textComponent.getExtra() != null && !textComponent.getExtra().isEmpty()) {
             for (BaseComponent baseComponent : textComponent.getExtra()) {
-                AZChatComponent azChatComponent = new AZChatComponent((TextComponent) baseComponent);
-                this.extra.add(azChatComponent);
+                if (baseComponent instanceof TextComponent) {
+                    this.extra.add(new AZChatComponent((TextComponent) baseComponent));
+                } else {
+                    this.extra.add(new AZChatComponent(new TextComponent(baseComponent.toLegacyText())));
+                }
             }
         }
         if (textComponent.getClickEvent() != null) {

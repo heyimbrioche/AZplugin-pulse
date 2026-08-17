@@ -40,12 +40,17 @@ public class AZSubTag implements AZCommand {
             return;
         }
         AZPlayer azPlayer = Main.getAZManager().getPlayer(target);
+        if (azPlayer == null) {
+            sender.sendMessage("§cErreur: Joueur non trouvé !");
+            return;
+        }
         if (args[2].equalsIgnoreCase("reset")) {
             azPlayer.setSubTag(new AZEntityTag());
             azPlayer.flush();
             sender.sendMessage("§a[AZPlugin]§e changement de tag effectué !");
             return;
         }
+        // Idem /az tag : on recolle tous les arguments au-delà du nom du tag
         StringBuilder sb = new StringBuilder();
         int count = 0;
         sb.append(args[2]);

@@ -59,6 +59,6 @@ public class PLSPPacketBuffer extends AbstractPLSPPacketBuffer<PLSPPacketBuffer>
     @Override
     public PLSPPacketBuffer resetReaderIndex() {
         // TODO Implement this method
-        throw null;
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }

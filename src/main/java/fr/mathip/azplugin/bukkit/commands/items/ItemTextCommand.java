@@ -26,6 +26,7 @@ public class ItemTextCommand implements ItemCommand {
             player.sendMessage("§c/az item text <text>");
             return;
         }
+        // On recolle tous les mots après "text" pour avoir le texte complet
         StringBuilder sb = new StringBuilder();
         int count = 0;
         for (String arg : args) {
@@ -34,8 +35,11 @@ public class ItemTextCommand implements ItemCommand {
             }
             count++;
         }
+        // Sprite EMOJI + le texte en SpriteData : l'item devient du texte rendu
         nbtItem.mergeCompound(
                 new NBTContainer("{PacDisplay: {Sprite: \"EMOJI\", SpriteData: \"" + sb.toString() + "\"}}"));
-        player.getItemInHand().setItemMeta(nbtItem.getItem().getItemMeta());
+        // setItemInHand : éviter setItemMeta qui strip les enchantements en 1.8
+        player.setItemInHand(nbtItem.getItem());
+        player.sendMessage("§a[AZPlugin]§e Texte appliqué sur l'item.");
     }
 }

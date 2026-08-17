@@ -22,6 +22,8 @@ public class PlayerTagModule implements Module, Listener {
         enable = false;
     }
 
+    // Module playertag : donne un tag de rareté au joueur selon sa permission.
+    // Attention, le module est OFF par défaut, faut l'activer dans la config.
     @EventHandler
     private void onJoint(PlayerJoinEvent event) {
         AZPlayer azPlayer = Main.getInstance().getAZManager().getPlayer(event.getPlayer());
@@ -30,10 +32,13 @@ public class PlayerTagModule implements Module, Listener {
 
     private void handleRarityTag(AZPlayer azPlayer) {
         Player player = azPlayer.getPlayer();
+        // Aucune permission de rareté = pas de tag, on s'en va
         if (player.hasPermission("azplugin.rarity")) {
         } else {
             return;
         }
+        // Ordre important : on teste les raretés de la plus haute à la plus basse,
+        // sinon un joueur avec la perm ultimate aurait la rareté "uncommon" par exemple
         if (player.hasPermission("azplugin.rarity.ultimate")) {
             azPlayer.setTag(AZEntityTag.builder().rarity(Rarity.ULTIMATE).build());
         } else if (player.hasPermission("azplugin.rarity.cosmic")) {
@@ -49,7 +54,8 @@ public class PlayerTagModule implements Module, Listener {
         } else if (player.hasPermission("azplugin.rarity.uncommon")) {
             azPlayer.setTag(AZEntityTag.builder().rarity(Rarity.UNCOMMON).build());
         }
-        Bukkit.getScheduler().runTaskLaterAsynchronously(
+        // On attend un peu que le joueur soit bien spawn côté launcher avant de renvoyer le tag
+        Bukkit.getScheduler().runTaskLater(
                 Main.getInstance(),
                 () -> azPlayer.flush(),
                 10L);
@@ -60,6 +66,8 @@ public class PlayerTagModule implements Module, Listener {
         return enable;
     }
 
+    // Activer/désactiver le module enregistre ou désenregistre les listeners,
+    // comme ça zéro overhead quand le module est off.
     @Override
     public void setEnable(boolean enable) {
         this.enable = enable;

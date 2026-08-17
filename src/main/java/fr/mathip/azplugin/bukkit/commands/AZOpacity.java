@@ -47,6 +47,7 @@ public class AZOpacity implements AZCommand {
             }
         }
         AZPlayer azPlayer = Main.getAZManager().getPlayer(target);
+        // Le launcher n'accepte que du -1 (transparent) à 1 (opaque)
         if (opacity > 1 || opacity < -1) {
             sender.sendMessage("§cErreur: L'opacité droit être entre 1 et -1");
             return;

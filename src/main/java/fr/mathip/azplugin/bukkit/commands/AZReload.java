@@ -25,6 +25,7 @@ public class AZReload implements AZCommand{
     public void execute(CommandSender sender, String[] args) {
         sender.sendMessage("§a[AZPlugin]§e Reload en cours...");
         ConfigManager.getInstance().loadConfig();
+        // On réapplique flags + UI à tous les joueurs pour que la nouvelle config prenne effet direct
         for (Player player : Bukkit.getOnlinePlayers()) {
             ConfigManager.getInstance().getConFlags().applyFlags(player);
             ConfigManager.getInstance().applyUIComponents(player);

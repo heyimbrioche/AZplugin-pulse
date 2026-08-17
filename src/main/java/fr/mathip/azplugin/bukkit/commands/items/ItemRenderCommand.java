@@ -25,23 +25,28 @@ public class ItemRenderCommand implements ItemCommand {
 
     @Override
     public void execute(Player player, NBTItem nbtItem, String[] args) {
+        // <taille> + <couleur hex> : on règle scale ET couleur de rendu
         if (args.length >= 4) {
             try {
                 nbtItem.mergeCompound(new NBTContainer("{PacRender: {Scale: " + Float.parseFloat(args[2]) + ", Color: "
                         + AZColor.get0xAARRGGBB(args[3]) + "}, PacDisplay: {Color: " + AZColor.get0xAARRGGBB(args[3])
                         + "}}"));
-                player.getItemInHand().setItemMeta(nbtItem.getItem().getItemMeta());
+                // setItemInHand(full item) : setItemMeta(getItemMeta()) strip les enchantements en 1.8
+                player.setItemInHand(nbtItem.getItem());
+                player.sendMessage("§a[AZPlugin]§e Rendu modifié.");
             } catch (NumberFormatException e) {
                 player.sendMessage("§cErreur : Les valeur est invalide !.");
             }
         } else if (args.length == 3) {
             try {
                 nbtItem.mergeCompound(new NBTContainer("{PacRender: {Scale: " + Float.parseFloat(args[2]) + "}}"));
-                player.getItemInHand().setItemMeta(nbtItem.getItem().getItemMeta());
+                player.setItemInHand(nbtItem.getItem());
+                player.sendMessage("§a[AZPlugin]§e Rendu modifié.");
             } catch (NumberFormatException e) {
                 player.sendMessage("§cErreur : Les valeur est invalide !.");
             }
         } else {
+            // Sans couleur, on ne touche qu'à la scale
             player.sendMessage("§c/az item render <taille> [couleur(Hex)]");
             player.sendMessage(
                     "§aVous pouvez utiliser ce site pour faire des couleurs en Hexadécimal https://htmlcolorcodes.com/fr/");

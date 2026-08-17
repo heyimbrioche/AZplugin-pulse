@@ -10,6 +10,7 @@ import java.util.*;
 
 public class CommandManager implements CommandExecutor {
 
+    // Maps indexées par la classe, comme ça on retrouve la commande sans le nom
     private Map<Class<? extends AZCommand>, AZCommand> commands;
     private final Map<Class<? extends ItemCommand>, ItemCommand> itemCommands;
     private static CommandManager instance;
@@ -24,6 +25,7 @@ public class CommandManager implements CommandExecutor {
         instance = this;
         if (s.equalsIgnoreCase("az")) {
             if (args.length == 0) {
+                // /az tout seul = on affiche la liste des commandes
                 commandSender.sendMessage("§a[AZPlugin]§e Liste des commandes:");
                 for (AZCommand azCommand : commands.values()) {
                     commandSender.sendMessage("§a /az " + azCommand.name() + " :§e " + azCommand.description());

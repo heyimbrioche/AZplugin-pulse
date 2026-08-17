@@ -28,7 +28,13 @@ public class AZWorldEnv implements AZCommand{
     @Override
     public void execute(CommandSender sender, String[] args) {
         Player target;
-        PLSPWorldEnv worldEnv = PLSPWorldEnv.valueOf(args[1].toUpperCase());
+        PLSPWorldEnv worldEnv;
+        try {
+            worldEnv = PLSPWorldEnv.valueOf(args[1].toUpperCase());
+        } catch (IllegalArgumentException e) {
+            sender.sendMessage("§cErreur: L'environnement '" + args[1] + "' est invalide ! Utilisez NORMAL, NETHER ou THE_END.");
+            return;
+        }
 
 
         if (args.length >= 3) {
@@ -46,6 +52,7 @@ public class AZWorldEnv implements AZCommand{
         }
         AZPlayer azPlayer = Main.getAZManager().getPlayer(target);
 
+        // On envoie direct le packet au launcher, pas besoin de passer par l'AZPlayer
         PLSPPacketWorldEnv worldEnvPacket = new PLSPPacketWorldEnv();
         worldEnvPacket.setName(target.getWorld().getName());
         worldEnvPacket.setType(worldEnv.name());

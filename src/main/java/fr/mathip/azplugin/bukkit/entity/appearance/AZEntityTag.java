@@ -81,7 +81,7 @@ public class AZEntityTag {
 
         public static int convertNameTagVisibility(Visibility teamVisibility) {
             if (teamVisibility == null) {
-                return 0;
+                return 1; // Default to ALWAYS if visibility is null
             }
             switch (teamVisibility) {
                 case ALWAYS:

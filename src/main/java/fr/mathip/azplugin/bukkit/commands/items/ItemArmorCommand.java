@@ -28,6 +28,7 @@ public class ItemArmorCommand implements ItemCommand {
         }
         int armor;
         try {
+            // Le launcher attend la valeur * 100 (ex: 20 → 2000)
             armor = Integer.parseInt(args[2]) * 100;
         } catch (NumberFormatException e) {
             player.sendMessage("§cVous devez mettre un nombre");
@@ -35,5 +36,6 @@ public class ItemArmorCommand implements ItemCommand {
         }
         nbtItem.mergeCompound(new NBTContainer("{PacPropArmor: " + armor + "s}"));
         player.setItemInHand(nbtItem.getItem());
+        player.sendMessage("§a[AZPlugin]§e Armure modifiée.");
     }
 }

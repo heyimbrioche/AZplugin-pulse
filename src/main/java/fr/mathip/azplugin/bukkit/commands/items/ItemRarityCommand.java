@@ -40,9 +40,11 @@ public class ItemRarityCommand implements ItemCommand {
         }
         nbtItem.mergeCompound(new NBTContainer("{PacDisplay:{Rarity: \"" + rarity.name() + "\"}}"));
         player.setItemInHand(nbtItem.getItem());
+        player.sendMessage("§a[AZPlugin]§e Rareté appliquée: §f" + rarity.name());
     }
 
     @Override
+    // Suggestions pour la tab completion des raretés
     public List<String> suggest(Player player, String[] args) {
         List<String> completion = new ArrayList<>();
         for (ItemRarity rarity : ItemRarity.values()) {

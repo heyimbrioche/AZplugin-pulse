@@ -38,14 +38,14 @@ public class PopupConfig {
             popup.setTextComponent(textComonent);
             ConfigurationSection okButton = popupConf.getConfigurationSection("ok-button");
             AZChatComponent okComponent = new AZChatComponent("");
-            if (!okButton.getString("command").isEmpty()) {
+            if (okButton != null && okButton.getString("command") != null && !okButton.getString("command").isEmpty()) {
                 okComponent.setClickEvent(new AZChatComponent.ClickEvent("run_command", okButton.getString("command")));
             }
             popup.setOkComponent(okComponent);
             if (popupConf.getConfigurationSection("cancel-button") != null) {
                 ConfigurationSection cancelButton = popupConf.getConfigurationSection("cancel-button");
                 AZChatComponent cancelComponent = new AZChatComponent("");
-                if (!cancelButton.getString("command").isEmpty()) {
+                if (cancelButton != null && cancelButton.getString("command") != null && !cancelButton.getString("command").isEmpty()) {
                     cancelComponent.setClickEvent(new AZChatComponent.ClickEvent("run_command", cancelButton.getString("command")));
                 }
                 popup.setCancelComponent(cancelComponent);

@@ -92,6 +92,9 @@ public class PacketPopup {
     }
 
     public void send(Player player) {
+        if (textComponent == null || player == null) {
+            return;
+        }
         for (AZChatComponent extra : textComponent.getExtra()) {
             extra.setText(extra.getText().replaceAll("%player%", player.getName()));
         }
